@@ -6,6 +6,7 @@ from skeleton.states import GameState, TerminalState, RoundState
 from skeleton.states import NUM_ROUNDS, STARTING_STACK, BIG_BLIND, SMALL_BLIND
 from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
+import eval7
 
 
 class Player(Bot):
@@ -24,6 +25,11 @@ class Player(Bot):
         Nothing.
         '''
         self.strong_hole = False
+        self.strong_hand = False
+        singles = []
+        pairs = []
+        toak = []
+        
 
     def handle_new_round(self, game_state, round_state, active):
         '''
@@ -62,6 +68,7 @@ class Player(Bot):
         #my_cards = previous_state.hands[active]  # your cards
         #opp_cards = previous_state.hands[1-active]  # opponent's cards or [] if not revealed
         self.strong_hole = False
+        self.strong_hand = False
         pass
 
     def get_action(self, game_state, round_state, active):
@@ -94,6 +101,7 @@ class Player(Bot):
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
 
         self.allocate_cards(my_cards)
+        self.evaluate_current_hand(my_cards, board_cards)
 
 
         net_upper_raise_bound = round_state.raise_bounds()
@@ -102,7 +110,7 @@ class Player(Bot):
         net_cost = 0
         my_action = None
 
-        if (RaiseAction in legal_actions and self.strong_hole):
+        if (RaiseAction in legal_actions and (self.strong_hole or self.strong_hand)):
             min_raise, max_raise = round_state.raise_bounds()
             max_cost = max_raise - my_pip
 
@@ -155,10 +163,42 @@ class Player(Bot):
         if len(pairs) > 0:
             self.strong_hole = True
 
+    def find_all_cards(self, my_cards, board_cards, sortby):
+        all_cards = my_cards + board_cards
+        if sortby == 'ranks':
+            ranks = {} # number:suite
 
+            for card in all_cards: #for card in hand
+                card_rank = card[0]
+                card_suite = card[1]
 
-        
+                if card_rank in ranks:
+                    ranks[card_rank].append(card_suite)
+                else:
+                    ranks[card_rank] = [card_suite]
+            return ranks
 
+        elif sortby == 'suites':
+            suites = {} # suite:number
+
+            for card in all_cards: #for card in hand
+                card_rank = card[0]
+                card_suite = card[1]
+
+                if card_suite in suite:
+                    ranks[card_suite].append(card_suite)
+                else:
+                    ranks[card_suite] = [card_rank]
+            return suites
+    
+    def evaluate_current_hand(self, my_cards, board_cards):
+        avail_cards = my_cards + board_cards
+        hand = [eval7.Card(card) for card in avail_cards]
+        index = eval7.evaluate(hand)
+        handtype = eval7.handtype(index)
+        print(handtype)
+        if str(handtype) in ['Straight', 'Flush', 'Royal Flush', 'Full House']:
+            self.strong_hand = True
 
 if __name__ == '__main__':
     run_bot(Player(), parse_args())
