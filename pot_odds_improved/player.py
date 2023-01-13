@@ -241,11 +241,17 @@ class Player(Bot):
             opp_hole = draw[:_OPP]
             community = board_card + draw[_OPP:_OPP+_COMM]
 
-            for i in range(26):
+            for i in range(len(draw)):
                 card = draw[_OPP+_COMM+i-1]
+                print(card.suit)
+                if int(str(card.suit)) not in [1,2]: #1 represents diamond, 2 represents heart
+                    break
+                community = community + [draw[_OPP  + _COMM + i]]
+
+            for card in draw:
                 print(card)
-
-
+                print(card.rank)
+                print(card.suit)
 
             our_hand = hole_card + community
             opp_hand = opp_hole + community
