@@ -247,11 +247,9 @@ class Player(Bot):
                 if int(str(card.suit)) not in [1,2]: #1 represents diamond, 2 represents heart
                     break
                 community = community + [draw[_OPP  + _COMM + i]]
+            
+            print(community)
 
-            for card in draw:
-                print(card)
-                print(card.rank)
-                print(card.suit)
 
             our_hand = hole_card + community
             opp_hand = opp_hole + community
