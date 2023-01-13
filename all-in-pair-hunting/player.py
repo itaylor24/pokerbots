@@ -82,6 +82,7 @@ class Player(Bot):
         Returns:
         Your action.
         '''
+
         legal_actions = round_state.legal_actions()  # the actions you are allowed to take
         street = round_state.street  # int representing pre-flop, flop, turn, or river respectively
         my_cards = round_state.hands[active]  # your cards
@@ -93,6 +94,7 @@ class Player(Bot):
         continue_cost = opp_pip - my_pip  # the number of chips needed to stay in the pot
         my_contribution = STARTING_STACK - my_stack  # the number of chips you have contributed to the pot
         opp_contribution = STARTING_STACK - opp_stack  # the number of chips your opponent has contributed to the pot
+        
         # if RaiseAction in legal_actions:
         #    min_raise, max_raise = round_state.raise_bounds()  # the smallest and largest numbers of chips for a legal bet/raise
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
