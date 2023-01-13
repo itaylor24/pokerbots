@@ -1,3 +1,6 @@
+*.txt
+*.pyc
+*.zip
 .DS_Store
-gamelog.txt
 __pycache__
+
