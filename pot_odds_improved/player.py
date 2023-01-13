@@ -141,10 +141,10 @@ class Player(Bot):
             temp_action = FoldAction()
 
         if street == 0:
-            strength = 1
+            strength = .5
 
         else:
-            MONTE_CARLO_ITERS = 100
+            MONTE_CARLO_ITERS = 500
             strength = self.calc_strength(my_cards, MONTE_CARLO_ITERS, board_cards)
         
         if continue_cost > 0:
@@ -243,13 +243,9 @@ class Player(Bot):
 
             for i in range(len(draw)):
                 card = draw[_OPP+_COMM+i-1]
-                print(card.suit)
                 if int(str(card.suit)) not in [1,2]: #1 represents diamond, 2 represents heart
                     break
                 community = community + [draw[_OPP  + _COMM + i]]
-            
-            print(community)
-
 
             our_hand = hole_card + community
             opp_hand = opp_hole + community

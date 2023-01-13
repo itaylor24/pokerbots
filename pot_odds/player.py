@@ -141,10 +141,10 @@ class Player(Bot):
             temp_action = FoldAction()
 
         if street == 0:
-            strength = 1
+            strength = .5
 
         else:
-            MONTE_CARLO_ITERS = 100
+            MONTE_CARLO_ITERS = 500
             strength = self.calc_strength(my_cards, MONTE_CARLO_ITERS, board_cards)
         
         if continue_cost > 0:
