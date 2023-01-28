@@ -49,7 +49,6 @@ STATUS = lambda players: ''.join([PVALUE(p.name, p.bankroll) for p in players])
 # The engine expects a response of K at the end of the round as an ack,
 # otherwise a response which encodes the player's action
 # Action history is sent once, including the player's actions
-count = 0
 
 
 class RoundState(namedtuple('_RoundState', ['button', 'street', 'final_street', 'pips', 'stacks', 'hands', 'deck', 'previous_state'])):
@@ -64,7 +63,6 @@ class RoundState(namedtuple('_RoundState', ['button', 'street', 'final_street', 
         '''
         Compares the players' hands and computes payoffs.
         '''
-        global count
         score0 = eval7.evaluate(self.deck.peek(self.final_street) + self.hands[0])
         score1 = eval7.evaluate(self.deck.peek(self.final_street) + self.hands[1])
         if score0 > score1:
@@ -73,8 +71,6 @@ class RoundState(namedtuple('_RoundState', ['button', 'street', 'final_street', 
             delta = self.stacks[0] - STARTING_STACK
         else:  # split the pot
             delta = (self.stacks[0] - self.stacks[1]) // 2
-        count += 1
-        #print(count)
         return TerminalState([delta, -delta], self)
 
     def legal_actions(self):
@@ -436,6 +432,7 @@ class Game():
             players = players[::-1]
         self.log.append('')
         self.log.append('Final' + STATUS(players))
+        print('Final' + STATUS(players))         #ADDED BY JUSTIN
         for player in players:
             player.stop()
         name = GAME_LOG_FILENAME + '.txt'

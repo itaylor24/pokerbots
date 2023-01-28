@@ -50,11 +50,11 @@ class Player(Bot):
         Returns:
         Nothing.
         '''
-        #my_bankroll = game_state.bankroll  # the total number of chips you've gained or lost from the beginning of the game to the start of this round
-        #game_clock = game_state.game_clock  # the total number of seconds your bot has left to play this game
-        #round_num = game_state.round_num  # the round number from 1 to NUM_ROUNDS
-        # my_cards = round_state.hands[active]  # your cards
-        # #big_blind = bool(active)  # True if you are the big blind    
+        my_bankroll = game_state.bankroll  # the total number of chips you've gained or lost from the beginning of the game to the start of this round
+        game_clock = game_state.game_clock  # the total number of seconds your bot has left to play this game
+        round_num = game_state.round_num  # the round number from 1 to NUM_ROUNDS
+        my_cards = round_state.hands[active]  # your cards
+        big_blind = bool(active)  # True if you are the big blind    
         pass
 
     def handle_round_over(self, game_state, terminal_state, active):
@@ -182,33 +182,8 @@ class Player(Bot):
             
             else:
                 my_action = CheckAction()
-        
+        print(my_action)
         return my_action
-    
-
-    # def allocate_cards(self, my_cards):
-    #     ranks = {} # number:suite
-
-    #     for card in my_cards: #for card in hand
-    #         card_rank = card[0]
-    #         card_suite = card[1]
-
-    #         if card_rank in ranks:
-    #             ranks[card_rank].append(card_suite)
-    #         else:
-    #             ranks[card_rank] = [card_suite]
-        
-    #     singles = []
-    #     pairs = []
-
-    #     for rank in ranks:
-    #         if len(ranks[rank]) == 1:
-    #             singles.append(rank)
-    #         else:
-    #             pairs.append(rank)
-        
-    #     if len(pairs) > 0:
-    #         self.strong_hole = True
     
     def hole_list_to_key(self, hole):
         '''
@@ -327,34 +302,6 @@ class Player(Bot):
         print('the probability of you winning our hand, knowing the', state, 'over', iterations, 'trials is:', hand_strength)
 
         return hand_strength
-
-    # def find_all_cards(self, my_cards, board_cards, sortby):
-    #     all_cards = my_cards + board_cards
-    #     if sortby == 'ranks':
-    #         ranks = {} # number:suite
-
-    #         for card in all_cards: #for card in hand
-    #             card_rank = card[0]
-    #             card_suite = card[1]
-
-    #             if card_rank in ranks:
-    #                 ranks[card_rank].append(card_suite)
-    #             else:
-    #                 ranks[card_rank] = [card_suite]
-    #         return ranks
-
-    #     elif sortby == 'suites':
-    #         suites = {} # suite:number
-
-    #         for card in all_cards: #for card in hand
-    #             card_rank = card[0]
-    #             card_suite = card[1]
-
-    #             if card_suite in suite:
-    #                 ranks[card_suite].append(card_suite)
-    #             else:
-    #                 ranks[card_suite] = [card_rank]
-    #         return suites
 
 if __name__ == '__main__':
     run_bot(Player(), parse_args())
