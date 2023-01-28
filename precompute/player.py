@@ -31,6 +31,7 @@ class Player(Bot):
         # pairs = []
         # toak = []
         self.board_cards = []
+        self.final_action = None
         calculated_df = pd.read_csv('hole_strengths.csv')
         holes = calculated_df.Holes #the columns of our spreadsheet
         strengths = calculated_df.Strengths
@@ -55,6 +56,7 @@ class Player(Bot):
         round_num = game_state.round_num  # the round number from 1 to NUM_ROUNDS
         my_cards = round_state.hands[active]  # your cards
         big_blind = bool(active)  # True if you are the big blind    
+        print('Round Number: #' + str(round_num))
         pass
 
     def handle_round_over(self, game_state, terminal_state, active):
@@ -80,11 +82,16 @@ class Player(Bot):
         # index = eval7.evaluate(hand)
         # handtype = eval7.handtype(index)
         # print(handtype)
-        
+        print('The final action was:', self.final_action)
         print(my_cards) #, 'hand =', eval7.evaluate)
         print(opp_cards)
         print(self.board_cards)
-
+        if my_delta > 0:
+            print('You won this round')
+        elif my_delta < 0:
+            print('You lost this round')
+        else:
+            print('You tied this round')
         print()
 
     def get_action(self, game_state, round_state, active):
@@ -182,7 +189,7 @@ class Player(Bot):
             
             else:
                 my_action = CheckAction()
-        print(my_action)
+        self.final_action = my_action
         return my_action
     
     def hole_list_to_key(self, hole):
