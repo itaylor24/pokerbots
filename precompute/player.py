@@ -8,6 +8,7 @@ from skeleton.bot import Bot
 from skeleton.runner import parse_args, run_bot
 import eval7
 import random
+import pandas as pd
 
 
 class Player(Bot):
@@ -30,6 +31,11 @@ class Player(Bot):
         # pairs = []
         # toak = []
         self.board_cards = []
+        calculated_df = pd.read_csv('hole_strengths.csv')
+        holes = calculated_df.Holes #the columns of our spreadsheet
+        strengths = calculated_df.Strengths
+        self.starting_strengths = dict(zip(holes, strengths)) #convert to a dictionary, O(1) lookup time!
+
         
 
     def handle_new_round(self, game_state, round_state, active):
@@ -112,7 +118,6 @@ class Player(Bot):
         #    min_cost = min_raise - my_pip  # the cost of a minimum bet/raise
         #    max_cost = max_raise - my_pip  # the cost of a maximum bet/raise
 
-
         min_raise, max_raise = round_state.raise_bounds()
         
         my_action = None
@@ -140,8 +145,9 @@ class Player(Bot):
         else:
             temp_action = FoldAction()
 
-        if street == 0:
-            strength = .5
+        if board_cards == []:
+            key = self.hole_list_to_key(my_cards)
+            strength = self.starting_strengths[key]
 
         else:
             MONTE_CARLO_ITERS = 400
@@ -204,6 +210,70 @@ class Player(Bot):
     #     if len(pairs) > 0:
     #         self.strong_hole = True
     
+    def hole_list_to_key(self, hole):
+        '''
+        Converts a hole card list into a key that we can use to query our 
+        strength dictionary
+        hole: list - A list of two card strings in the engine's format (Kd, As, Th, 7d, etc.)
+        '''
+
+        card_1 = hole[0] #get all of our relevant info
+        card_2 = hole[1]
+
+        rank_1, suit_1 = card_1[0], card_1[1] #card info
+        rank_2, suit_2 = card_2[0], card_2[1]
+
+        #to determine color (for abstraction)
+        if card_1[1] == 'h' or card_1[1] == 'd':
+            card_1_color = 'r'
+        
+        else:
+            card_1_color = 'b'
+        
+        if card_2[1] == 'h' or card_2[1] == 'd':
+            card_2_color = 'r'
+        
+        else:
+            card_2_color = 'b'
+
+        if card_1_color == card_2_color:
+            if card_1_color == 'r':
+                color_string = 'r'
+            else:
+                color_string = 'b'
+        
+        else:
+            color_string = 'm'
+        
+        numeric_1, numeric_2 = self.rank_to_numeric(rank_1), self.rank_to_numeric(rank_2) #make numeric
+
+        suited = suit_1 == suit_2 #off-suit or not
+        suit_string = 's' if suited else 'o'
+
+        if numeric_1 >= numeric_2: #keep our hole cards in rank order
+                return rank_1 + rank_2 + suit_string + color_string
+        else:
+            return rank_2 + rank_1 + suit_string + color_string 
+
+    def rank_to_numeric(self, rank):
+        '''
+        Method that converts our given rank as a string
+        into an integer ranking
+        rank: str - one of 'A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2'
+        '''
+        if rank.isnumeric(): #2-9, we can just use the int version of this string
+            return int(rank)
+        elif rank == 'T': #10 is T, so we need to specify it here
+            return 10
+        elif rank == 'J': #Face cards for the rest of them
+            return 11
+        elif rank == 'Q':
+            return 12
+        elif rank == 'K':
+            return 13
+        else: #Ace (A) is the only one left, give it the highest rank
+            return 14
+
     def calc_strength(self, hole, iterations, board_card):
         deck = eval7.Deck()
         hole_card = [eval7.Card(card) for card in hole]

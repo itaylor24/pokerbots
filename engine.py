@@ -74,7 +74,7 @@ class RoundState(namedtuple('_RoundState', ['button', 'street', 'final_street', 
         else:  # split the pot
             delta = (self.stacks[0] - self.stacks[1]) // 2
         count += 1
-        print(count)
+        #print(count)
         return TerminalState([delta, -delta], self)
 
     def legal_actions(self):

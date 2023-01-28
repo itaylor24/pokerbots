@@ -45,8 +45,8 @@ def calc_strength(hole, iterations, board_card = []):
 
     return hand_strength
 
-if __name__ == '__main__':
-    _MONTE_CARLO_ITERS = 100000
+def get_hole_abstraction():
+    _MONTE_CARLO_ITERS = 100
     _RANKS = 'AKQJT98765432'
 
     off_rank_holes = list(itertools.combinations(_RANKS, 2)) #all holes we can have EXCEPT pocket pairs (e.g. [(A, K), (A, Q), (A, J)...])
@@ -77,10 +77,13 @@ if __name__ == '__main__':
 
     all_strengths = suited_r_strengths + suited_b_strengths + off_suit_r_strengths + off_suit_b_strengths + off_suit_m_strengths + pocket_pair_r_strengths + pocket_pair_b_strengths + pocket_pair_m_strengths #aggregate them all
     all_holes = suited_r_holes + suited_b_holes + off_suited_r_holes + off_suited_b_holes + off_suited_m_holes + pocket_pairs_r + pocket_pairs_b + pocket_pairs_m
+    return (all_holes, all_strengths)
 
+if __name__ == '__main__':
+    all_holes, all_strengths = get_hole_abstraction()
     hole_df = pd.DataFrame() #make our spreadsheet with a pandas data frame!
     hole_df['Holes'] = all_holes
     hole_df['Strengths'] = all_strengths
 
-    hole_df.to_csv('new_hole_strengths.csv', index=False) #save it for later use, trade space for time!
+    hole_df.to_csv('hole_strengths.csv', index=False) #save it for later use, trade space for time!
 
